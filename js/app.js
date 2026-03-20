@@ -269,7 +269,7 @@ function renderProductCard(p) {
       </div>
       <div class="product-card__footer">
         <button class="btn btn--secondary btn--sm" onclick='Cart.add(${JSON.stringify({id:p.id,name:p.name,price:p.price,pictures:p.pictures,vendor:p.vendor,categoryId:p.categoryId})})'>В кошик</button>
-        <button class="btn btn--primary btn--sm" onclick='OrderModal.open(${JSON.stringify({id:p.id,name:p.name,price:p.price})})'>Замовити</button>
+        <a href="checkout.html?id=${p.id}&cat=${p.categoryId}" class="btn btn--primary btn--sm">Замовити</a>
       </div>
     </div>`;
 }
@@ -353,7 +353,7 @@ function injectCart() {
           <span>Разом:</span>
           <strong id="cartTotal">0 грн</strong>
         </div>
-        <button class="btn btn--primary btn--full" onclick="checkoutFromCart()">Оформити замовлення</button>
+        <a href="checkout.html?cart=1" class="btn btn--primary btn--full" style="justify-content:center">Оформити замовлення</a>
       </div>
     </div>`);
 }

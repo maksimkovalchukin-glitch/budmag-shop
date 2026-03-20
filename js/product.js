@@ -90,7 +90,7 @@ const ProductPage = {
           <button class="btn btn--secondary" onclick="ProductPage.addToCart()">
             🛒 В кошик
           </button>
-          <button class="btn btn--primary" onclick="OrderModal.open(ProductPage.product)">
+          <button class="btn btn--primary" onclick="window.location.href='checkout.html?id='+ProductPage.product.id+'&cat='+ProductPage.product.categoryId">
             ⚡ Замовити зараз
           </button>
         </div>
