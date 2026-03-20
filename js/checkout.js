@@ -11,6 +11,7 @@ const Checkout = {
   cityName: '',
   selectedBranch: null,
   callPref: 'call',
+  payment: 'cod',
   products: [],
   _acTimeout: null,
   _allBranches: [],
@@ -82,6 +83,7 @@ const Checkout = {
     document.getElementById('sumSubtotal').textContent = fmtPrice(total) + ' грн';
     document.getElementById('sumTotal').textContent = fmtPrice(total) + ' грн';
     totals.style.display = '';
+    this.setPayment(this.payment);
   },
 
   // ---- STEPS ----
@@ -310,6 +312,19 @@ const Checkout = {
     return '';
   },
 
+  // ---- PAYMENT ----
+  setPayment(val) {
+    this.payment = val;
+    const labels = { cod: '💵 Накладений платіж', card: '💳 Картою онлайн', invoice: '🏦 Безготівковий' };
+    ['cod', 'card', 'invoice'].forEach(p => {
+      const map = { cod: 'optPayCOD', card: 'optPayCard', invoice: 'optPayInvoice' };
+      document.getElementById(map[p])?.classList.toggle('selected', p === val);
+    });
+    const row = document.getElementById('summaryPaymentRow');
+    const valEl = document.getElementById('summaryPaymentVal');
+    if (row && valEl) { row.style.display = ''; valEl.textContent = labels[val] || val; }
+  },
+
   // ---- CALL PREFERENCE ----
   setCallPref(val) {
     this.callPref = val;
@@ -341,10 +356,15 @@ const Checkout = {
     btn.textContent = '⏳ Оформлюємо...';
 
     const orderNum = 'BM-' + Date.now().toString().slice(-6);
+    const paymentLabels = { cod: 'Накладений платіж', card: 'Оплата картою онлайн', invoice: 'Безготівковий розрахунок' };
     const payload = {
       orderNum,
       type: 'order',
       noCall: this.callPref === 'nocall',
+      payment: {
+        method: this.payment,
+        label: paymentLabels[this.payment] || this.payment,
+      },
       customer: { name, phone, email },
       delivery: {
         carrier: this.carrier === 'np' ? 'Нова Пошта' : 'Укрпошта',

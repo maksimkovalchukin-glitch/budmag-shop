@@ -489,6 +489,34 @@
             </div>
             <div class="checkout-card__body">
 
+              <div style="margin-bottom:20px">
+                <label style="font-size:.85rem;font-weight:700;color:var(--text-2);display:block;margin-bottom:10px">Спосіб оплати *</label>
+
+                <label class="confirm-option selected" id="optPayCOD" onclick="Checkout.setPayment('cod')">
+                  <input type="radio" name="payment" value="cod" checked>
+                  <div>
+                    <div class="confirm-option__title">💵 Накладений платіж</div>
+                    <div class="confirm-option__sub">Оплата при отриманні на відділенні пошти</div>
+                  </div>
+                </label>
+
+                <label class="confirm-option" id="optPayCard" onclick="Checkout.setPayment('card')">
+                  <input type="radio" name="payment" value="card">
+                  <div>
+                    <div class="confirm-option__title">💳 Оплата картою онлайн</div>
+                    <div class="confirm-option__sub">Посилання для оплати надійде після підтвердження замовлення</div>
+                  </div>
+                </label>
+
+                <label class="confirm-option" id="optPayInvoice" onclick="Checkout.setPayment('invoice')">
+                  <input type="radio" name="payment" value="invoice">
+                  <div>
+                    <div class="confirm-option__title">🏦 Безготівковий розрахунок</div>
+                    <div class="confirm-option__sub">Рахунок-фактура для юридичних осіб / ФОП</div>
+                  </div>
+                </label>
+              </div>
+
               <div class="form-group">
                 <label>Коментар до замовлення <span style="color:var(--text-muted);font-weight:400">(необов'язково)</span></label>
                 <textarea id="inpComment" placeholder="Уточнення по товару, кількість, колір, розмір..."></textarea>
@@ -540,6 +568,10 @@
               <div class="summary-row">
                 <span>Доставка</span>
                 <span style="color:var(--success)">За тарифами НП</span>
+              </div>
+              <div class="summary-row" id="summaryPaymentRow" style="display:none">
+                <span>Оплата</span>
+                <span id="summaryPaymentVal"></span>
               </div>
               <div class="summary-row total">
                 <span>Разом</span>
