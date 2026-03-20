@@ -1,8 +1,8 @@
 const CONFIG = {
   // n8n webhooks — замінити на свої URL
   webhooks: {
-    order: 'https://n8n.rayton.net/webhook/shop-order',
-    chat:  'https://n8n.rayton.net/webhook/shop-chat',
+    order: 'https://n8n.automaticly.org/webhook/shop-order',
+    chat:  'https://n8n.automaticly.org/webhook/shop-chat',
   },
   shop: {
     name: 'БудМаг',
