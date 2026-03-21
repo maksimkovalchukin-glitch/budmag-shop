@@ -8,7 +8,7 @@ const CONFIG = {
   shop: {
     name: 'Будівля.store',
     phone: '+380 50 000 00 00',
-    email: 'info@budivlya.store',
+    telegram: '@budivlya_store',
     workHours: 'Пн-Пт 9:00–18:00',
   },
   dataPath: './data',
