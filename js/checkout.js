@@ -312,6 +312,13 @@ const Checkout = {
     return '';
   },
 
+  // ---- CALL PREFERENCE ----
+  setCallPref(val) {
+    this.callPref = val;
+    document.getElementById('optNoCall').classList.toggle('selected', val === 'nocall');
+    document.getElementById('optCallYes').classList.toggle('selected', val === 'call');
+  },
+
   // ---- PAYMENT ----
   setPayment(val) {
     this.payment = val;

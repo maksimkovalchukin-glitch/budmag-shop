@@ -504,11 +504,18 @@
               </div>
 
               <div style="margin-bottom:20px">
-                <label class="confirm-option selected" id="optNoCall">
+                <label class="confirm-option selected" id="optNoCall" onclick="Checkout.setCallPref('nocall')">
                   <input type="radio" name="callPref" value="nocall" checked>
                   <div>
                     <div class="confirm-option__title">✅ Не передзвонюйте — оформити автоматично</div>
                     <div class="confirm-option__sub">Замовлення буде оформлено одразу. Менеджер зв'яжеться при потребі.</div>
+                  </div>
+                </label>
+                <label class="confirm-option" id="optCallYes" onclick="Checkout.setCallPref('call')">
+                  <input type="radio" name="callPref" value="call">
+                  <div>
+                    <div class="confirm-option__title">📞 Передзвоніть для підтвердження</div>
+                    <div class="confirm-option__sub">Менеджер зателефонує протягом 30 хвилин у робочий час</div>
                   </div>
                 </label>
               </div>
