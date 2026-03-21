@@ -257,7 +257,7 @@ ul { list-style: none; }
 .hero {
   margin-top: var(--header-h);
   background: linear-gradient(135deg, #0f1b2d 0%, #1a2e4a 50%, #0f1b2d 100%);
-  padding: 80px 0 80px;
+  padding: 80px 0 40px;
   min-height: 480px;
   display: flex;
   align-items: center;
