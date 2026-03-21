@@ -198,7 +198,7 @@ ul { list-style: none; }
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-left: auto;
+  flex-shrink: 0;
 }
 .header__nav {
   display: flex;
