@@ -6,9 +6,9 @@ const CONFIG = {
     chatPoll: 'https://n8n.automaticly.org/webhook/shop-chat-reply',
   },
   shop: {
-    name: 'Будівля.ua',
+    name: 'Будівля.store',
     phone: '+380 50 000 00 00',
-    email: 'info@budivlya.ua',
+    email: 'info@budivlya.store',
     workHours: 'Пн-Пт 9:00–18:00',
   },
   dataPath: './data',
