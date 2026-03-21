@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Parse dropshipping.ua XML feed -> static JSON files for the shop."""
 
-import json, os, re
-from xml.etree.ElementTree import parse
+import json, os, re, sys, urllib.request
+from xml.etree.ElementTree import parse, fromstring
 
-XML_PATH = 'C:/tmp/feed3533.xml'
 OUT_DIR = os.path.join(os.path.dirname(__file__), 'data')
+FEED_URL = os.environ.get('FEED_URL', '')
+XML_PATH = 'C:/tmp/feed3533.xml'
 
 GROUPS = [
     {'id': 'santekhnika', 'name': 'Сантехніка', 'icon': 'droplet',
@@ -35,8 +36,14 @@ def main():
     os.makedirs(OUT_DIR, exist_ok=True)
 
     print('Parsing XML...')
-    tree = parse(XML_PATH)
-    shop = tree.getroot().find('shop')
+    if FEED_URL:
+        print(f'Downloading from {FEED_URL}')
+        with urllib.request.urlopen(FEED_URL, timeout=60) as r:
+            root = fromstring(r.read())
+        shop = root.find('shop')
+    else:
+        tree = parse(XML_PATH)
+        shop = tree.getroot().find('shop')
 
     cat_map = {}
     for c in shop.find('categories').findall('category'):

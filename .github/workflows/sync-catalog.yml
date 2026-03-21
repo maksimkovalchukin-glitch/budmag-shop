@@ -1,0 +1,25 @@
+name: Sync catalog from dropshipping.ua
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # щодня о 6:00 Kyiv (UTC+2)
+  workflow_dispatch:       # також можна запустити вручну з GitHub
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run build.py
+        env:
+          FEED_URL: ${{ secrets.FEED_URL }}
+        run: python3 build.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --cached --quiet && echo "No changes" || git commit -m "chore: sync catalog $(date +'%Y-%m-%d')"
+          git push
