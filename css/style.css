@@ -696,6 +696,7 @@ ul { list-style: none; }
 .vendor-check input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; }
 
 .catalog-main {}
+.catalog-filter-btn { display: none; }
 .catalog-topbar {
   display: flex;
   align-items: center;
@@ -1575,6 +1576,13 @@ ul { list-style: none; }
   .hero__search { flex-direction: column; gap: 10px; }
   .hero__search input,
   .hero__search button { width: 100%; }
+
+  /* Hero stats 2x2 grid */
+  .hero__stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+  .hero-stat__label { font-size: .72rem; }
+
+  /* Catalog filter button — only mobile */
+  .catalog-filter-btn { display: inline-flex !important; }
 
   /* Catalog sidebar — mobile overlay */
   .catalog-layout { grid-template-columns: 1fr; }
