@@ -2,11 +2,16 @@
    PRODUCT.JS — Product detail page
    ============================================= */
 
-// Get plain text from HTML
+// Get plain text from HTML, preserving newlines
 function descText(html) {
   if (!html) return '';
+  // Already plain text (no HTML tags) — preserve newlines
+  if (!/<[^>]+>/.test(html)) return html;
   const tmp = document.createElement('div');
-  tmp.innerHTML = html;
+  tmp.innerHTML = html.replace(/<br\s*\/?>/gi, '
+').replace(/<\/p>/gi, '
+').replace(/<\/li>/gi, '
+');
   return tmp.textContent || '';
 }
 
@@ -18,41 +23,39 @@ function formatPlainDesc(text, productName = '') {
   }
   if (!text.trim()) return '';
 
-  // Split by sentence endings AND semicolons
-  const segments = text
-    .split(/(?<=[.!?])\s+|(?<=;)\s+/)
-    .map(s => s.replace(/;$/, '').trim())
-    .filter(s => s.length > 1);
+  // Split on newlines first (preserves XML structure), then clean up
+  const lines = text
+    .split(/
++/)
+    .map(l => l.replace(/	/g, ' ').replace(/[ 	]+/g, ' ').trim())
+    .filter(l => l.length > 2);
 
   const html = [];
   let listItems = [];
-  let paraItems = [];
 
   const flushList = () => {
     if (!listItems.length) return;
-    html.push(`<ul style="margin:0 0 14px;padding-left:18px;line-height:1.9">${listItems.map(i => `<li style="margin-bottom:2px">${escHtml(i)}</li>`).join('')}</ul>`);
+    html.push(`<ul style="margin:0 0 14px;padding-left:18px;line-height:1.9">${listItems.map(i => `<li style="margin-bottom:3px">${escHtml(i)}</li>`).join('')}</ul>`);
     listItems = [];
   };
-  const flushPara = () => {
-    if (!paraItems.length) return;
-    html.push(`<p style="margin:0 0 14px;line-height:1.65">${escHtml(paraItems.join(' '))}</p>`);
-    paraItems = [];
-  };
 
-  for (const seg of segments) {
-    // Spec pattern: "Short label: value" (label ≤ 35 chars)
-    const isSpec = /^[^:]{2,35}:\s*.{1,}/.test(seg) && seg.length < 160;
+  for (const line of lines) {
+    // Section header: ends with colon (e.g. "Насосна частина:")
+    if (/^.{2,60}:\s*$/.test(line)) {
+      flushList();
+      html.push(`<p style="margin:16px 0 4px;font-weight:600;color:var(--text)">${escHtml(line.replace(/:\s*$/, ''))}</p>`);
+      continue;
+    }
+    // Spec item: "Label: value" with label ≤ 45 chars
+    const isSpec = /^[^:]{2,45}:\s*.+/.test(line) && line.length < 250;
     if (isSpec) {
-      flushPara();
-      listItems.push(seg);
+      listItems.push(line);
     } else {
       flushList();
-      paraItems.push(seg);
-      flushPara();
+      html.push(`<p style="margin:0 0 14px;line-height:1.65">${escHtml(line)}</p>`);
     }
   }
   flushList();
-  flushPara();
   return html.join('');
 }
 
@@ -125,9 +128,11 @@ const ProductPage = {
     let descHtml = '';
     if (p.description) {
       const plain = descText(p.description);
-      const sentences = plain.split(/(?<=[.!?])\s+/).filter(s => s.trim());
-      const preview = sentences.slice(0, 3).join(' ');
-      const hasMore = sentences.length > 3;
+      const sections = plain.split(/
++/).map(l => l.trim()).filter(l => l.length > 2);
+      const preview = sections.slice(0, 2).join('
+');
+      const hasMore = sections.length > 2;
       descHtml = `<div class="product-info__desc" id="descBlock">
         <div id="descText">${formatPlainDesc(preview, p.name)}${hasMore ? `<a href="#" style="color:var(--accent);font-size:.85rem" onclick="ProductPage.showFullDesc(event)">Читати більше →</a>` : ''}</div>
       </div>`;
@@ -293,9 +298,11 @@ async function autoTranslateProduct(product) {
 
     if (descEl && results[i]) {
       const translated = results[i];
-      const sentences = translated.split(/(?<=[.!?])\s+/).filter(s => s.trim());
       const hasMore = document.querySelector('#descText a');
-      const preview = sentences.slice(0, 3).join(' ');
+      const tSections = translated.split(/
++/).map(l => l.trim()).filter(l => l.length > 2);
+      const preview = tSections.slice(0, 2).join('
+');
       descEl.innerHTML = formatPlainDesc(preview, h1 ? h1.textContent : '') + (hasMore ? `<a href="#" style="color:var(--accent);font-size:.85rem" onclick="ProductPage.showFullDesc(event)">Читати більше →</a>` : '');
       // Store translated full text for showFullDesc
       if (product._translatedDesc === undefined) product._translatedDesc = translated;
