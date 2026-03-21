@@ -172,21 +172,10 @@ const Chat = {
 
       typing?.remove();
 
-      if (res.ok) {
-        const data = await res.json().catch(() => null);
-        const reply = data?.reply || data?.message || data?.text || data?.output;
-        if (reply) {
-          this._addBotMessage(reply);
-          this._startPoll();
-        } else {
-          this._addBotMessage('Дякую за повідомлення! Наш менеджер відповість вам найближчим часом. 😊');
-        }
-      } else {
-        this._addBotMessage('Зараз трохи зайнятий, але незабаром відповім. Ви також можете зателефонувати нам: <b>' + CONFIG.shop.phone + '</b>');
-      }
+      typing?.remove();
+      this._startPoll();
     } catch {
       typing?.remove();
-      this._addBotMessage('Немає зʼєднання з сервером. Зателефонуйте нам: <b>' + CONFIG.shop.phone + '</b>');
     }
   },
   _startPoll() {
