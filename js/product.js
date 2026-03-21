@@ -2,6 +2,22 @@
    PRODUCT.JS — Product detail page
    ============================================= */
 
+// Sanitize HTML description: strip scripts/iframes, keep text+br+p
+function sanitizeDesc(html) {
+  if (!html) return '';
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  tmp.querySelectorAll('script,iframe,style,object,embed').forEach(el => el.remove());
+  return tmp.innerHTML;
+}
+function descText(html, maxLen) {
+  if (!html) return '';
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  const text = tmp.textContent || '';
+  return maxLen ? text.slice(0, maxLen) : text;
+}
+
 const ProductPage = {
   product: null,
   activeImg: 0,
@@ -26,7 +42,7 @@ const ProductPage = {
   _render(p, catId) {
     document.title = `${p.name} — Будівля.ua`;
     // Dynamic SEO meta tags
-    const _desc = (p.description || `Купити ${p.name} з доставкою по Україні`).replace(/<[^>]+>/g, '').slice(0, 160);
+    const _desc = descText(p.description || `Купити ${p.name} з доставкою по Україні`).slice(0, 160);
     const _img = p.pictures && p.pictures[0] ? p.pictures[0] : '';
     const _url = `https://budivlya.ua/product.html?id=${p.id}&cat=${catId}`;
     const _sm = (id, attr, val) => { const el = document.getElementById(id); if (el && val) el.setAttribute(attr, val); };
@@ -112,7 +128,14 @@ const ProductPage = {
 
         ${p.description ? `
           <div class="product-info__desc" id="descBlock">
-            <div id="descText">${escHtml(p.description.slice(0, 400))}${p.description.length > 400 ? `...<a href="#" style="color:var(--accent)" onclick="ProductPage.showFullDesc(event)"> Читати більше</a>` : ''}</div>
+            <div id="descText">${(() => {
+              const full = sanitizeDesc(p.description);
+              const preview = descText(p.description, 400);
+              const needMore = descText(p.description).length > 400;
+              return needMore
+                ? escHtml(preview) + `... <a href="#" style="color:var(--accent)" onclick="ProductPage.showFullDesc(event)">Читати більше</a>`
+                : full;
+            })()}</div>
           </div>` : ''}
 
         ${specsHtml ? `
@@ -167,7 +190,7 @@ const ProductPage = {
     e.preventDefault();
     const el = document.getElementById('descText');
     if (el && this.product?.description) {
-      el.innerHTML = escHtml(this.product.description);
+      el.innerHTML = sanitizeDesc(this.product.description);
     }
   },
 
