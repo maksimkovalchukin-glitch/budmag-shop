@@ -198,8 +198,7 @@ const Chat = {
         if (!res.ok) return;
         const data = await res.json().catch(() => null);
         if (data?.reply) {
-          this._addBotMessage(escHtml(data.reply).replace(/
-/g, '<br>'));
+          this._addBotMessage(escHtml(data.reply).replace(/\n/g, '<br>'));
           const badge = document.querySelector('#chatFab .badge');
           if (badge && !this.isOpen) badge.style.display = 'block';
         }

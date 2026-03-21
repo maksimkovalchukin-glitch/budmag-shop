@@ -25,8 +25,7 @@ function formatPlainDesc(text, productName = '') {
 
   // Split on newlines first (preserves XML structure), then clean up
   const lines = text
-    .split(/
-+/)
+    .split(/\n+/)
     .map(l => l.replace(/	/g, ' ').replace(/[ 	]+/g, ' ').trim())
     .filter(l => l.length > 2);
 
@@ -128,10 +127,8 @@ const ProductPage = {
     let descHtml = '';
     if (p.description) {
       const plain = descText(p.description);
-      const sections = plain.split(/
-+/).map(l => l.trim()).filter(l => l.length > 2);
-      const preview = sections.slice(0, 2).join('
-');
+      const sections = plain.split(/\n+/).map(l => l.trim()).filter(l => l.length > 2);
+      const preview = sections.slice(0, 2).join('\n');
       const hasMore = sections.length > 2;
       descHtml = `<div class="product-info__desc" id="descBlock">
         <div id="descText">${formatPlainDesc(preview, p.name)}${hasMore ? `<a href="#" style="color:var(--accent);font-size:.85rem" onclick="ProductPage.showFullDesc(event)">Читати більше →</a>` : ''}</div>
@@ -299,10 +296,8 @@ async function autoTranslateProduct(product) {
     if (descEl && results[i]) {
       const translated = results[i];
       const hasMore = document.querySelector('#descText a');
-      const tSections = translated.split(/
-+/).map(l => l.trim()).filter(l => l.length > 2);
-      const preview = tSections.slice(0, 2).join('
-');
+      const tSections = translated.split(/\n+/).map(l => l.trim()).filter(l => l.length > 2);
+      const preview = tSections.slice(0, 2).join('\n');
       descEl.innerHTML = formatPlainDesc(preview, h1 ? h1.textContent : '') + (hasMore ? `<a href="#" style="color:var(--accent);font-size:.85rem" onclick="ProductPage.showFullDesc(event)">Читати більше →</a>` : '');
       // Store translated full text for showFullDesc
       if (product._translatedDesc === undefined) product._translatedDesc = translated;
