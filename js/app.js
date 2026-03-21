@@ -392,11 +392,74 @@ function checkoutFromCart() {
   closeCart();
 }
 
+// ---- MOBILE MENU ----
+function injectMobileMenu() {
+  if (document.getElementById('mobileMenu')) return;
+  // Add burger + search buttons to header actions
+  const actions = document.querySelector('.header__actions');
+  if (actions) {
+    actions.insertAdjacentHTML('afterbegin', `
+      <button class="mobile-search-btn" id="mobileSearchBtn" onclick="toggleMobileSearch()" title="Пошук">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </button>
+      <button class="burger-btn" id="burgerBtn" onclick="toggleMobileMenu()" title="Меню">
+        <span></span><span></span><span></span>
+      </button>`);
+  }
+  // Inject mobile menu drawer
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  const navLinks = [
+    { href: 'index.html', label: '🏠 Головна' },
+    { href: 'catalog.html', label: '📦 Каталог' },
+    { href: 'delivery.html', label: '🚚 Доставка' },
+  ];
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+    <div class="mobile-menu" id="mobileMenu">
+      <div class="mobile-menu__head">
+        <a href="index.html" class="logo">
+          <div class="logo__mark">Б</div>
+          <div><span class="logo__text">Будівля.ua</span></div>
+        </a>
+        <button onclick="closeMobileMenu()">✕</button>
+      </div>
+      <div class="mobile-menu__search">
+        <input type="text" id="mobileMenuSearch" placeholder="Пошук товарів..." onkeydown="if(event.key==='Enter')doMobileSearch()">
+        <button onclick="doMobileSearch()">Знайти</button>
+      </div>
+      <nav class="mobile-menu__nav">
+        ${navLinks.map(l => `<a href="${l.href}"${l.href === currentPage ? ' class="active"' : ''}>${l.label}</a>`).join('')}
+      </nav>
+    </div>`);
+}
+
+function toggleMobileMenu() {
+  document.getElementById('mobileMenu')?.classList.toggle('open');
+  document.getElementById('mobileOverlay')?.classList.toggle('open');
+  document.body.classList.toggle('menu-open');
+}
+function closeMobileMenu() {
+  document.getElementById('mobileMenu')?.classList.remove('open');
+  document.getElementById('mobileOverlay')?.classList.remove('open');
+  document.body.classList.remove('menu-open');
+}
+function toggleMobileSearch() {
+  const wrap = document.querySelector('.header__search');
+  if (!wrap) return;
+  const isOpen = wrap.classList.toggle('mobile-open');
+  if (isOpen) wrap.querySelector('input')?.focus();
+}
+function doMobileSearch() {
+  const q = document.getElementById('mobileMenuSearch')?.value.trim();
+  if (q) window.location.href = `catalog.html?search=${encodeURIComponent(q)}`;
+}
+
 // ---- INIT ----
 document.addEventListener('DOMContentLoaded', () => {
   initHeader();
   initHeaderSearch();
   injectOrderModal();
   injectCart();
+  injectMobileMenu();
   Cart.load();
 });
