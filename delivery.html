@@ -218,9 +218,9 @@
 
     /* Mobile */
     @media (max-width: 768px) {
-      .delivery-body { grid-template-columns: 1fr; grid-template-rows: 320px 1fr; height: auto; }
-      #deliveryMap { height: 320px; order: -1; }
-      .branch-list { height: 400px; border-right: none; border-top: 1.5px solid var(--border); }
+      .delivery-body { grid-template-columns: 1fr; height: auto; display: flex; flex-direction: column; }
+      #deliveryMap { height: 300px; min-height: 0; order: -1; flex-shrink: 0; }
+      .branch-list { height: 60vh; border-right: none; border-top: 1.5px solid var(--border); }
     }
   </style>
 </head>
