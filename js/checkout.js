@@ -10,7 +10,7 @@ const Checkout = {
   cityRef: null,
   cityName: '',
   selectedBranch: null,
-  callPref: 'call',
+  callPref: 'nocall',
   payment: 'cod',
   products: [],
   _acTimeout: null,
@@ -315,30 +315,9 @@ const Checkout = {
   // ---- PAYMENT ----
   setPayment(val) {
     this.payment = val;
-    const labels = { cod: '💵 Накладений платіж', card: '💳 Картою онлайн', invoice: '🏦 Безготівковий' };
-    ['cod', 'card', 'invoice'].forEach(p => {
-      const map = { cod: 'optPayCOD', card: 'optPayCard', invoice: 'optPayInvoice' };
-      document.getElementById(map[p])?.classList.toggle('selected', p === val);
-    });
     const row = document.getElementById('summaryPaymentRow');
     const valEl = document.getElementById('summaryPaymentVal');
-    if (row && valEl) { row.style.display = ''; valEl.textContent = labels[val] || val; }
-  },
-
-  // ---- CALL PREFERENCE ----
-  setCallPref(val) {
-    this.callPref = val;
-    document.getElementById('optCallYes').classList.toggle('selected', val === 'call');
-    document.getElementById('optNoCall').classList.toggle('selected', val === 'nocall');
-    // Update submit button
-    const btn = document.getElementById('submitBtn');
-    if (val === 'nocall') {
-      btn.textContent = '⚡ Оформити без дзвінка';
-      btn.style.background = 'var(--success)';
-    } else {
-      btn.textContent = 'Оформити замовлення';
-      btn.style.background = '';
-    }
+    if (row && valEl) { row.style.display = ''; valEl.textContent = 'Накладений платіж'; }
   },
 
   // ---- SUBMIT ----

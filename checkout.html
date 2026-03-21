@@ -493,29 +493,12 @@
             <div class="checkout-card__body">
 
               <div style="margin-bottom:20px">
-                <label style="font-size:.85rem;font-weight:700;color:var(--text-2);display:block;margin-bottom:10px">Спосіб оплати *</label>
-
-                <label class="confirm-option selected" id="optPayCOD" onclick="Checkout.setPayment('cod')">
+                <label style="font-size:.85rem;font-weight:700;color:var(--text-2);display:block;margin-bottom:10px">Спосіб оплати</label>
+                <label class="confirm-option selected" id="optPayCOD">
                   <input type="radio" name="payment" value="cod" checked>
                   <div>
                     <div class="confirm-option__title">💵 Накладений платіж</div>
                     <div class="confirm-option__sub">Оплата при отриманні на відділенні пошти</div>
-                  </div>
-                </label>
-
-                <label class="confirm-option" id="optPayCard" onclick="Checkout.setPayment('card')">
-                  <input type="radio" name="payment" value="card">
-                  <div>
-                    <div class="confirm-option__title">💳 Оплата картою онлайн (Monobank)</div>
-                    <div class="confirm-option__sub">Після оформлення — перенаправлення на захищену сторінку оплати. Комісія 1.5%</div>
-                  </div>
-                </label>
-
-                <label class="confirm-option" id="optPayInvoice" onclick="Checkout.setPayment('invoice')">
-                  <input type="radio" name="payment" value="invoice">
-                  <div>
-                    <div class="confirm-option__title">🏦 Безготівковий розрахунок</div>
-                    <div class="confirm-option__sub">Рахунок-фактура для юридичних осіб / ФОП</div>
                   </div>
                 </label>
               </div>
@@ -526,27 +509,17 @@
               </div>
 
               <div style="margin-bottom:20px">
-                <label style="font-size:.85rem;font-weight:700;color:var(--text-2);display:block;margin-bottom:10px">Як з вами зв'язатись?</label>
-
-                <label class="confirm-option selected" id="optCallYes" onclick="Checkout.setCallPref('call')">
-                  <input type="radio" name="callPref" value="call" checked>
+                <label class="confirm-option selected" id="optNoCall">
+                  <input type="radio" name="callPref" value="nocall" checked>
                   <div>
-                    <div class="confirm-option__title">📞 Передзвоніть мені для підтвердження</div>
-                    <div class="confirm-option__sub">Менеджер зателефонує протягом 30 хвилин у робочий час</div>
-                  </div>
-                </label>
-
-                <label class="confirm-option" id="optNoCall" onclick="Checkout.setCallPref('nocall')">
-                  <input type="radio" name="callPref" value="nocall">
-                  <div>
-                    <div class="confirm-option__title">✅ Я впевнений — не передзвонюйте</div>
-                    <div class="confirm-option__sub">Замовлення буде оформлено автоматично. Ви отримаєте підтвердження на email/SMS.</div>
+                    <div class="confirm-option__title">✅ Не передзвонюйте — оформити автоматично</div>
+                    <div class="confirm-option__sub">Замовлення буде оформлено одразу. Менеджер зв'яжеться при потребі.</div>
                   </div>
                 </label>
               </div>
 
               <button class="btn btn--primary btn--full btn--lg" onclick="Checkout.submit()" id="submitBtn">
-                Оформити замовлення
+                ⚡ Оформити замовлення
               </button>
               <p style="text-align:center;font-size:.78rem;color:var(--text-muted);margin-top:10px">
                 Натискаючи кнопку, ви погоджуєтесь з умовами використання
