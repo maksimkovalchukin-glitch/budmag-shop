@@ -506,8 +506,8 @@
                 <label class="confirm-option" id="optPayCard" onclick="Checkout.setPayment('card')">
                   <input type="radio" name="payment" value="card">
                   <div>
-                    <div class="confirm-option__title">💳 Оплата картою онлайн</div>
-                    <div class="confirm-option__sub">Посилання для оплати надійде після підтвердження замовлення</div>
+                    <div class="confirm-option__title">💳 Оплата картою онлайн (Monobank)</div>
+                    <div class="confirm-option__sub">Після оформлення — перенаправлення на захищену сторінку оплати. Комісія 1.5%</div>
                   </div>
                 </label>
 
@@ -588,12 +588,17 @@
 
     <!-- SUCCESS -->
     <div class="checkout-success" id="checkoutSuccess">
-      <div class="success-icon">🎉</div>
-      <h2>Замовлення оформлено!</h2>
+      <div class="success-icon" id="successIcon">🎉</div>
+      <h2 id="successTitle">Замовлення оформлено!</h2>
       <div class="order-num" id="successOrderNum"></div>
       <p id="successMsg"></p>
       <div class="no-call-badge" id="noCallBadge" style="display:none">
         ✓ Передзвонювати не будемо
+      </div>
+      <div id="paymentSuccessBadge" style="display:none;margin-top:12px">
+        <span style="display:inline-flex;align-items:center;gap:6px;background:#ebf8ff;border:1px solid #bee3f8;color:#2b6cb0;padding:6px 14px;border-radius:20px;font-size:.82rem;font-weight:600">
+          ✓ Оплату підтверджено
+        </span>
       </div>
       <div style="margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
         <a href="catalog.html" class="btn btn--secondary">← До каталогу</a>
@@ -608,5 +613,20 @@
 <script src="js/app.js"></script>
 <script src="js/checkout.js"></script>
 <script src="js/chat.js"></script>
+<script>
+// Handle redirect back from Monobank payment page
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('paid') === '1') {
+    document.getElementById('checkoutMain').style.display = 'none';
+    const s = document.getElementById('checkoutSuccess');
+    s.classList.add('show');
+    const orderNum = params.get('order') || '';
+    document.getElementById('successOrderNum').textContent = orderNum ? '\u2116 ' + orderNum : '';
+    document.getElementById('successMsg').textContent = '\u041e\u043f\u043b\u0430\u0442\u0430 \u043f\u0440\u043e\u0439\u0448\u043b\u0430 \u0443\u0441\u043f\u0456\u0448\u043d\u043e. \u0417\u0430\u043c\u043e\u0432\u043b\u0435\u043d\u043d\u044f \u0431\u0443\u0434\u0435 \u0432\u0456\u0434\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u043e \u043f\u0456\u0441\u043b\u044f \u043f\u0456\u0434\u0442\u0432\u0435\u0440\u0434\u0436\u0435\u043d\u043d\u044f \u043e\u043f\u043b\u0430\u0442\u0438.';
+    document.getElementById('paymentSuccessBadge').style.display = '';
+  }
+})();
+</script>
 </body>
 </html>

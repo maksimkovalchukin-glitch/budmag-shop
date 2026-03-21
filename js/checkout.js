@@ -353,10 +353,10 @@ const Checkout = {
 
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
-    btn.textContent = '⏳ Оформлюємо...';
+    btn.textContent = this.payment === 'card' ? '⏳ Переходимо до оплати...' : '⏳ Оформлюємо...';
 
-    const orderNum = 'BM-' + Date.now().toString().slice(-6);
-    const paymentLabels = { cod: 'Накладений платіж', card: 'Оплата картою онлайн', invoice: 'Безготівковий розрахунок' };
+    const orderNum = 'BU-' + Date.now().toString().slice(-6);
+    const paymentLabels = { cod: 'Накладений платіж', card: 'Оплата картою онлайн (Monobank)', invoice: 'Безготівковий розрахунок' };
     const payload = {
       orderNum,
       type: 'order',
@@ -386,11 +386,23 @@ const Checkout = {
     };
 
     try {
-      await fetch(CONFIG.webhooks.order, {
+      const res = await fetch(CONFIG.webhooks.order, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+
+      // Card payment: redirect to Monobank payment page
+      if (this.payment === 'card' && res.ok) {
+        let data = {};
+        try { data = await res.json(); } catch {}
+        if (data.paymentUrl) {
+          // Clear cart before redirect
+          if (new URLSearchParams(window.location.search).get('cart')) Cart.clear();
+          window.location.href = data.paymentUrl;
+          return;
+        }
+      }
     } catch {}
 
     // Clear cart if cart order

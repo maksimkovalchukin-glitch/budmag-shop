@@ -18,4 +18,8 @@ const CONFIG = {
 
   // Укрпошта API — безкоштовний ключ на dev.ukrposhta.ua
   ukrPoshtaKey: '',
+
+  // Monobank Acquiring — токен з Monobank Business → Еквайринг → API
+  // Отримати: https://web.monobank.ua → Бізнес → Еквайринг
+  monobankToken: '',
 };
