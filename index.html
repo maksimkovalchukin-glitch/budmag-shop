@@ -248,7 +248,7 @@ async function initHome() {
         </div>
         <div class="category-card__body">
           <div>
-            <div class="category-card__name">${GROUP_ICONS[g.id] || ''} ${escHtml(g.name)}</div>
+            <div class="category-card__name">${escHtml(g.name)}</div>
             <div class="category-card__count">${g.total.toLocaleString('uk')} товарів</div>
           </div>
           <div class="category-card__arrow">→</div>
