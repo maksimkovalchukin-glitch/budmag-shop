@@ -136,7 +136,8 @@ def main():
             'description': strip_html(o.findtext('description') or ''),
             'params': [
                 {'name': p.get('name'), 'value': p.text}
-                for p in o.findall('param') if p.text
+                for p in o.findall('param')
+                if p.text and p.get('name') and len(p.get('name').strip()) > 2 and not p.get('name').strip().isdigit()
             ],
         }
         offers_by_cat.setdefault(cat_id, []).append(product)
