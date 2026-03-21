@@ -6,6 +6,7 @@ const Chat = {
   isOpen: false,
   sessionId: null,
   _msgCount: 0,
+  _pollTimer: null,
 
   init() {
     this.sessionId = 'sess_' + Math.random().toString(36).slice(2);
@@ -59,6 +60,7 @@ const Chat = {
   toggle() {
     this.isOpen = !this.isOpen;
     document.getElementById('chatPanel')?.classList.toggle('open', this.isOpen);
+    if (!this.isOpen) this._stopPoll();
     const fab = document.getElementById('chatFab');
     if (fab) fab.querySelector('.badge').style.display = this.isOpen ? 'none' : '';
     if (this.isOpen) {
@@ -175,6 +177,7 @@ const Chat = {
         const reply = data?.reply || data?.message || data?.text || data?.output;
         if (reply) {
           this._addBotMessage(reply);
+          this._startPoll();
         } else {
           this._addBotMessage('Дякую за повідомлення! Наш менеджер відповість вам найближчим часом. 😊');
         }
@@ -186,6 +189,28 @@ const Chat = {
       this._addBotMessage('Немає зʼєднання з сервером. Зателефонуйте нам: <b>' + CONFIG.shop.phone + '</b>');
     }
   },
+  _startPoll() {
+    this._stopPoll();
+    if (!CONFIG.webhooks.chatPoll) return;
+    this._pollTimer = setInterval(async () => {
+      try {
+        const res = await fetch(CONFIG.webhooks.chatPoll + '?sessionId=' + this.sessionId);
+        if (!res.ok) return;
+        const data = await res.json().catch(() => null);
+        if (data?.reply) {
+          this._addBotMessage(escHtml(data.reply).replace(/
+/g, '<br>'));
+          const badge = document.querySelector('#chatFab .badge');
+          if (badge && !this.isOpen) badge.style.display = 'block';
+        }
+      } catch {}
+    }, 5000);
+  },
+
+  _stopPoll() {
+    if (this._pollTimer) { clearInterval(this._pollTimer); this._pollTimer = null; }
+  },
+
 };
 
 document.addEventListener('DOMContentLoaded', () => Chat.init());

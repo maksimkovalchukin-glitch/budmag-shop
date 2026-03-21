@@ -353,7 +353,7 @@ const Checkout = {
       },
       customer: { name, phone, email },
       delivery: {
-        carrier: this.carrier === 'np' ? 'Нова Пошта' : 'Укрпошта',
+        carrier: 'Нова Пошта',
         branch: this.selectedBranch?.label || this.selectedBranch?.addr || '',
         branchNum: this.selectedBranch?.num || '',
         city: this.cityName,

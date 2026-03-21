@@ -2,7 +2,8 @@ const CONFIG = {
   // n8n webhooks — замінити на свої URL
   webhooks: {
     order: 'https://n8n.automaticly.org/webhook/shop-order',
-    chat:  'https://n8n.automaticly.org/webhook/shop-chat',
+    chat:     'https://n8n.automaticly.org/webhook/shop-chat',
+    chatPoll: 'https://n8n.automaticly.org/webhook/shop-chat-reply',
   },
   shop: {
     name: 'Будівля.ua',
