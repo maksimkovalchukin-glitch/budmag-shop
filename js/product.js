@@ -8,10 +8,7 @@ function descText(html) {
   // Already plain text (no HTML tags) — preserve newlines
   if (!/<[^>]+>/.test(html)) return html;
   const tmp = document.createElement('div');
-  tmp.innerHTML = html.replace(/<br\s*\/?>/gi, '
-').replace(/<\/p>/gi, '
-').replace(/<\/li>/gi, '
-');
+  tmp.innerHTML = html.replace(/<br\s*\/?>/gi, '\n').replace(/<\/p>/gi, '\n').replace(/<\/li>/gi, '\n');
   return tmp.textContent || '';
 }
 
