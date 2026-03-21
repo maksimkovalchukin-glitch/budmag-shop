@@ -264,23 +264,20 @@ function renderProductCard(p) {
   const img = p.pictures && p.pictures[0]
     ? `<img src="${p.pictures[0]}" alt="${escHtml(p.name)}" loading="lazy">`
     : `<span class="product-card__img--empty">📦</span>`;
-  const badge = p.available
-    ? `<span class="product-card__badge badge--available">В наявності</span>`
-    : `<span class="product-card__badge badge--unavailable">Немає</span>`;
   const productUrl = `product.html?id=${p.id}&cat=${p.categoryId}`;
+  const footer = p.available
+    ? `<button class="btn btn--secondary btn--sm" onclick='Cart.add(${JSON.stringify({id:p.id,name:p.name,price:p.price,pictures:p.pictures,vendor:p.vendor,categoryId:p.categoryId})})'>В кошик</button>
+       <a href="checkout.html?id=${p.id}&cat=${p.categoryId}" class="btn btn--primary btn--sm">Замовити</a>`
+    : `<span class="product-card__unavailable">Немає в наявності</span>`;
   return `
-    <div class="product-card">
+    <div class="product-card${p.available ? '' : ' product-card--unavailable'}">
       <a href="${productUrl}" class="product-card__img">${img}</a>
-      ${badge}
       <div class="product-card__body">
         <div class="product-card__vendor">${escHtml(p.vendor || '')}</div>
         <a href="${productUrl}" class="product-card__name" title="${escHtml(p.name)}">${escHtml(p.name)}</a>
         <div class="product-card__price">${fmtPrice(p.price)} <span class="product-card__price-sub">грн</span></div>
       </div>
-      <div class="product-card__footer">
-        <button class="btn btn--secondary btn--sm" onclick='Cart.add(${JSON.stringify({id:p.id,name:p.name,price:p.price,pictures:p.pictures,vendor:p.vendor,categoryId:p.categoryId})})'>В кошик</button>
-        <a href="checkout.html?id=${p.id}&cat=${p.categoryId}" class="btn btn--primary btn--sm">Замовити</a>
-      </div>
+      <div class="product-card__footer">${footer}</div>
     </div>`;
 }
 
