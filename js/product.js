@@ -10,15 +10,50 @@ function descText(html) {
   return tmp.textContent || '';
 }
 
-// Format plain text into readable paragraphs (~2 sentences each)
-function formatPlainDesc(text) {
-  // Split by sentence endings
-  const sentences = text.split(/(?<=[.!?])\s+/).filter(s => s.trim());
-  const paras = [];
-  for (let i = 0; i < sentences.length; i += 2) {
-    paras.push(sentences.slice(i, i + 2).join(' '));
+// Format plain text: paragraphs + spec lists, optionally strip product name from start
+function formatPlainDesc(text, productName = '') {
+  if (productName) {
+    const n = productName.trim();
+    if (text.trimStart().startsWith(n)) text = text.trimStart().slice(n.length).trimStart();
   }
-  return paras.map(p => `<p style="margin:0 0 14px;line-height:1.65">${escHtml(p)}</p>`).join('');
+  if (!text.trim()) return '';
+
+  // Split by sentence endings AND semicolons
+  const segments = text
+    .split(/(?<=[.!?])\s+|(?<=;)\s+/)
+    .map(s => s.replace(/;$/, '').trim())
+    .filter(s => s.length > 1);
+
+  const html = [];
+  let listItems = [];
+  let paraItems = [];
+
+  const flushList = () => {
+    if (!listItems.length) return;
+    html.push(`<ul style="margin:0 0 14px;padding-left:18px;line-height:1.9">${listItems.map(i => `<li style="margin-bottom:2px">${escHtml(i)}</li>`).join('')}</ul>`);
+    listItems = [];
+  };
+  const flushPara = () => {
+    if (!paraItems.length) return;
+    html.push(`<p style="margin:0 0 14px;line-height:1.65">${escHtml(paraItems.join(' '))}</p>`);
+    paraItems = [];
+  };
+
+  for (const seg of segments) {
+    // Spec pattern: "Short label: value" (label ≤ 35 chars)
+    const isSpec = /^[^:]{2,35}:\s*.{1,}/.test(seg) && seg.length < 160;
+    if (isSpec) {
+      flushPara();
+      listItems.push(seg);
+    } else {
+      flushList();
+      paraItems.push(seg);
+      if (paraItems.length >= 2) flushPara();
+    }
+  }
+  flushList();
+  flushPara();
+  return html.join('');
 }
 
 const ProductPage = {
@@ -94,7 +129,7 @@ const ProductPage = {
       const preview = sentences.slice(0, 3).join(' ');
       const hasMore = sentences.length > 3;
       descHtml = `<div class="product-info__desc" id="descBlock">
-        <div id="descText">${formatPlainDesc(preview)}${hasMore ? `<a href="#" style="color:var(--accent);font-size:.85rem" onclick="ProductPage.showFullDesc(event)">Читати більше →</a>` : ''}</div>
+        <div id="descText">${formatPlainDesc(preview, p.name)}${hasMore ? `<a href="#" style="color:var(--accent);font-size:.85rem" onclick="ProductPage.showFullDesc(event)">Читати більше →</a>` : ''}</div>
       </div>`;
     }
 
@@ -261,7 +296,7 @@ async function autoTranslateProduct(product) {
       const sentences = translated.split(/(?<=[.!?])\s+/).filter(s => s.trim());
       const hasMore = document.querySelector('#descText a');
       const preview = sentences.slice(0, 3).join(' ');
-      descEl.innerHTML = formatPlainDesc(preview) + (hasMore ? `<a href="#" style="color:var(--accent);font-size:.85rem" onclick="ProductPage.showFullDesc(event)">Читати більше →</a>` : '');
+      descEl.innerHTML = formatPlainDesc(preview, h1 ? h1.textContent : '') + (hasMore ? `<a href="#" style="color:var(--accent);font-size:.85rem" onclick="ProductPage.showFullDesc(event)">Читати більше →</a>` : '');
       // Store translated full text for showFullDesc
       if (product._translatedDesc === undefined) product._translatedDesc = translated;
     }
@@ -291,5 +326,5 @@ ProductPage.showFullDesc = function(e) {
   if (!el) return;
   const translated = this.product?._translatedDesc;
   const plain = translated || descText(this.product?.description || '');
-  el.innerHTML = formatPlainDesc(plain);
+  el.innerHTML = formatPlainDesc(plain, this.product?.name || '');
 };
