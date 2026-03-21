@@ -396,6 +396,12 @@ const Checkout = {
       Cart.clear();
     }
 
+    if (typeof gtag !== 'undefined') gtag('event', 'purchase', {
+      transaction_id: orderNum, currency: 'UAH',
+      value: this.products.reduce((s,p) => s + p.price*(p.qty||1), 0),
+      items: this.products.map(p => ({ item_id: p.id, item_name: p.name, price: p.price, quantity: p.qty||1 }))
+    });
+
     this._showSuccess(orderNum);
   },
 

@@ -69,6 +69,10 @@ const Cart = {
     }
     this.save();
     Toast.show(`"${product.name.slice(0,40)}..." додано до кошика`, 'success');
+    if (typeof gtag !== 'undefined') gtag('event', 'add_to_cart', {
+      currency: 'UAH', value: product.price,
+      items: [{ item_id: product.id, item_name: product.name, price: product.price, quantity: 1 }]
+    });
     this._renderSidebar();
   },
   remove(id) {
