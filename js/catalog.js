@@ -36,7 +36,7 @@ const CatalogPage = {
     if (!wrap || !this.catalog) return;
     const html = this.catalog.groups.map(g => `
       <div class="cat-group">
-        <div class="cat-group__title">${GROUP_ICONS[g.id] || ''} ${escHtml(g.name)}</div>
+        <div class="cat-group__title">${escHtml(g.name)}</div>
         ${g.cats.map(c => `
           <div class="cat-item${this.selectedCatId === c.id ? ' active' : ''}"
                onclick="CatalogPage.selectCat(${c.id}, '${escHtml(c.name)}', '${g.id}')">
@@ -98,7 +98,7 @@ const CatalogPage = {
     if (this.selectedGroupId && this.catalog) {
       const group = this.catalog.groups.find(g => g.id === this.selectedGroupId);
       if (group) {
-        document.getElementById('pageTitle').textContent = `${GROUP_ICONS[group.id] || ''} ${group.name}`;
+        document.getElementById('pageTitle').textContent = group.name;
         document.getElementById('breadcrumbCurrent').textContent = group.name;
         for (const cat of group.cats) {
           try {
