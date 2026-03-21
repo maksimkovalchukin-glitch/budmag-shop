@@ -45,6 +45,7 @@ const DeliveryPage = {
 
   _initMap() {
     this.map = L.map('deliveryMap', { zoomControl: true }).setView([49.0, 31.5], 6);
+    setTimeout(() => this.map.invalidateSize(), 100);
 
     // Tile layers
     this._layerStreet = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
