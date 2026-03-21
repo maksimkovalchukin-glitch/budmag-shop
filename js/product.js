@@ -2,20 +2,23 @@
    PRODUCT.JS — Product detail page
    ============================================= */
 
-// Sanitize HTML description: strip scripts/iframes, keep text+br+p
-function sanitizeDesc(html) {
+// Get plain text from HTML
+function descText(html) {
   if (!html) return '';
   const tmp = document.createElement('div');
   tmp.innerHTML = html;
-  tmp.querySelectorAll('script,iframe,style,object,embed').forEach(el => el.remove());
-  return tmp.innerHTML;
+  return tmp.textContent || '';
 }
-function descText(html, maxLen) {
-  if (!html) return '';
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  const text = tmp.textContent || '';
-  return maxLen ? text.slice(0, maxLen) : text;
+
+// Format plain text into readable paragraphs (~2 sentences each)
+function formatPlainDesc(text) {
+  // Split by sentence endings
+  const sentences = text.split(/(?<=[.!?])\s+/).filter(s => s.trim());
+  const paras = [];
+  for (let i = 0; i < sentences.length; i += 3) {
+    paras.push(sentences.slice(i, i + 3).join(' '));
+  }
+  return paras.map(p => `<p style="margin:0 0 10px">${escHtml(p)}</p>`).join('');
 }
 
 const ProductPage = {
@@ -83,15 +86,16 @@ const ProductPage = {
 
     const catLink = `catalog.html?cat=${catId}`;
 
-    // Description: plain text preview 300 chars, full HTML on expand
+    // Description: first 3 sentences as formatted paragraphs, rest hidden
     let descHtml = '';
     if (p.description) {
       const plain = descText(p.description);
-      if (plain.length > 300) {
-        descHtml = `<div class="product-info__desc" id="descBlock"><div id="descText">${escHtml(plain.slice(0, 300))}... <a href="#" style="color:var(--accent)" onclick="ProductPage.showFullDesc(event)">Читати більше</a></div></div>`;
-      } else {
-        descHtml = `<div class="product-info__desc" id="descBlock"><div id="descText">${sanitizeDesc(p.description)}</div></div>`;
-      }
+      const sentences = plain.split(/(?<=[.!?])\s+/).filter(s => s.trim());
+      const preview = sentences.slice(0, 3).join(' ');
+      const hasMore = sentences.length > 3;
+      descHtml = `<div class="product-info__desc" id="descBlock">
+        <div id="descText">${formatPlainDesc(preview)}${hasMore ? `<a href="#" style="color:var(--accent);font-size:.85rem" onclick="ProductPage.showFullDesc(event)">Читати більше →</a>` : ''}</div>
+      </div>`;
     }
 
     document.getElementById('productLayout').innerHTML = `
@@ -190,9 +194,9 @@ const ProductPage = {
   showFullDesc(e) {
     e.preventDefault();
     const el = document.getElementById('descText');
-    if (el && this.product?.description) {
-      el.innerHTML = sanitizeDesc(this.product.description);
-    }
+    if (!el || !this.product?.description) return;
+    const plain = descText(this.product.description);
+    el.innerHTML = formatPlainDesc(plain);
   },
 
   addToCart() {
@@ -226,3 +230,82 @@ const ProductPage = {
 };
 
 document.addEventListener('DOMContentLoaded', () => ProductPage.init());
+
+// ---- AUTO TRANSLATE (ru → uk) ----
+async function gtranslate(texts, toLang = 'uk') {
+  // Batch: join with unique delimiter, translate once, split back
+  const SEP = ' ||| ';
+  const joined = texts.join(SEP);
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${toLang}&dt=t&dt=ld&q=${encodeURIComponent(joined)}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const detectedLang = data[2];
+  const translatedJoined = (data[0] || []).map(c => c[0]).join('');
+  const results = translatedJoined.split(SEP).map(s => s.trim());
+  return { results, detectedLang };
+}
+
+async function autoTranslateProduct(product) {
+  try {
+    // Collect texts to translate
+    const h1 = document.querySelector('.product-info h1');
+    const descEl = document.getElementById('descText');
+    const specCells = [...document.querySelectorAll('.specs-table td')];
+
+    const texts = [];
+    if (h1) texts.push(h1.textContent.trim());
+    if (descEl) texts.push(descEl.textContent.replace(/Читати більше →?/, '').trim());
+    specCells.forEach(td => texts.push(td.textContent.trim()));
+
+    if (!texts[0]) return;
+
+    const { results, detectedLang } = await gtranslate(texts);
+    if (detectedLang === 'uk') return; // already Ukrainian
+
+    let i = 0;
+    if (h1 && results[i]) {
+      h1.textContent = results[i];
+      document.title = `${results[i]} — Будівля.ua`;
+      // Update breadcrumb last item
+      const bc = document.querySelector('.breadcrumb span[style]');
+      if (bc) bc.textContent = results[i].slice(0, 50) + (results[i].length > 50 ? '...' : '');
+    }
+    i++;
+
+    if (descEl && results[i]) {
+      const translated = results[i];
+      const sentences = translated.split(/(?<=[.!?])\s+/).filter(s => s.trim());
+      const hasMore = document.querySelector('#descText a');
+      const preview = sentences.slice(0, 3).join(' ');
+      descEl.innerHTML = formatPlainDesc(preview) + (hasMore ? `<a href="#" style="color:var(--accent);font-size:.85rem" onclick="ProductPage.showFullDesc(event)">Читати більше →</a>` : '');
+      // Store translated full text for showFullDesc
+      if (product._translatedDesc === undefined) product._translatedDesc = translated;
+    }
+    i++;
+
+    specCells.forEach((td, idx) => {
+      if (results[i + idx]) td.textContent = results[i + idx];
+    });
+
+  } catch (e) {
+    console.warn('Translation failed:', e);
+  }
+}
+
+// Hook into ProductPage._render to trigger translation after render
+const _origRender = ProductPage._render.bind(ProductPage);
+ProductPage._render = function(p, catId) {
+  _origRender(p, catId);
+  setTimeout(() => autoTranslateProduct(p), 300);
+};
+
+// Override showFullDesc to use translated text if available
+const _origShowFullDesc = ProductPage.showFullDesc.bind(ProductPage);
+ProductPage.showFullDesc = function(e) {
+  e.preventDefault();
+  const el = document.getElementById('descText');
+  if (!el) return;
+  const translated = this.product?._translatedDesc;
+  const plain = translated || descText(this.product?.description || '');
+  el.innerHTML = formatPlainDesc(plain);
+};

@@ -126,7 +126,8 @@ ul { list-style: none; }
 .header.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,.3); }
 .header > .container { width: 100%; }
 .header__inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
   gap: 20px;
   width: 100%;

@@ -4,11 +4,15 @@
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://n8n.automaticly.org https://api.novaposhta.ua https://tile.openstreetmap.org https://server.arcgisonline.com https://tiles.stadiamaps.com; frame-ancestors 'none';
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://n8n.automaticly.org https://api.novaposhta.ua https://tile.openstreetmap.org https://server.arcgisonline.com https://tiles.stadiamaps.com https://translate.googleapis.com; frame-ancestors 'none';
 
 /checkout.html
   X-Robots-Tag: noindex, nofollow
 
+/data/catalog.json
+  Cache-Control: no-cache
+  X-Robots-Tag: noindex
+
 /data/*
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=300
   X-Robots-Tag: noindex
