@@ -1570,16 +1570,16 @@ ul { list-style: none; }
   .cart-btn span:not(.cart-badge) { display: none; }
 
   /* Hero */
-  .hero { padding: 50px 0 40px; }
+  .hero { padding: 40px 0 110px; }
   .hero h1 { font-size: 1.8rem; }
-  .hero__stats { gap: 20px; }
   .hero__search { flex-direction: column; gap: 10px; }
   .hero__search input,
   .hero__search button { width: 100%; }
 
   /* Hero stats 2x2 grid */
-  .hero__stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
-  .hero-stat__label { font-size: .72rem; }
+  .hero__stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; margin-top: 24px; }
+  .hero-stat__num { font-size: 1.4rem; }
+  .hero-stat__label { font-size: .7rem; }
 
   /* Catalog filter button — only mobile */
   .catalog-filter-btn { display: inline-flex !important; }
