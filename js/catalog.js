@@ -59,7 +59,15 @@ const CatalogPage = {
     // Update title & breadcrumb
     document.getElementById('pageTitle').textContent = catName;
     document.getElementById('breadcrumbCurrent').textContent = catName;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // On mobile — close sidebar and scroll to products
+    if (window.innerWidth <= 768) {
+      document.getElementById('catalogSidebar')?.classList.remove('open');
+      setTimeout(() => {
+        document.getElementById('productsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   },
 
   _updateSidebarActive() {
@@ -244,7 +252,22 @@ const CatalogPage = {
 };
 
 function toggleSidebar() {
-  document.getElementById('catalogSidebar')?.classList.toggle('open');
+  const sidebar = document.getElementById('catalogSidebar');
+  if (!sidebar) return;
+  const isOpen = sidebar.classList.toggle('open');
+  // Create/remove backdrop
+  let backdrop = document.getElementById('sidebarBackdrop');
+  if (isOpen) {
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'sidebarBackdrop';
+      backdrop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:996';
+      backdrop.onclick = toggleSidebar;
+      document.body.appendChild(backdrop);
+    }
+  } else {
+    backdrop?.remove();
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => CatalogPage.init());

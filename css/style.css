@@ -1576,9 +1576,22 @@ ul { list-style: none; }
   .hero__search input,
   .hero__search button { width: 100%; }
 
-  /* Catalog */
+  /* Catalog sidebar — mobile overlay */
   .catalog-layout { grid-template-columns: 1fr; }
-  .catalog-sidebar { position: static; height: auto; }
+  .catalog-sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 300px;
+    height: 100%;
+    z-index: 997;
+    border-radius: 0;
+    transform: translateX(-100%);
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+    padding-top: 16px;
+  }
+  .catalog-sidebar.open { transform: translateX(0); }
+  #mobileFilterBtn { display: block !important; }
+  #mobileFilterBtn button { box-shadow: 0 4px 16px rgba(0,0,0,.3); }
 
   /* Product cards */
   .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
