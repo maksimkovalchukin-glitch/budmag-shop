@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Parse dropshipping.ua XML feed -> static JSON files for the shop."""
 
-import json, os, re, sys, urllib.request
+import html, json, os, re, sys, urllib.request
 from xml.etree.ElementTree import parse, fromstring
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), 'data')
@@ -95,7 +95,11 @@ CAT_NAMES_UK = {
 def strip_html(text):
     if not text:
         return ''
-    return re.sub(r'<[^>]+>', ' ', text).strip()
+    text = re.sub(r'<br\s*/?>', '\n', text, flags=re.IGNORECASE)
+    text = re.sub(r'</p>', '\n', text, flags=re.IGNORECASE)
+    text = re.sub(r'<[^>]+>', ' ', text)
+    text = html.unescape(text)
+    return re.sub(r'[ \t]+', ' ', text).strip()
 
 
 def main():
