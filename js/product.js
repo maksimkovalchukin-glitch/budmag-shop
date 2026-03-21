@@ -48,7 +48,7 @@ function formatPlainDesc(text, productName = '') {
     } else {
       flushList();
       paraItems.push(seg);
-      if (paraItems.length >= 2) flushPara();
+      flushPara();
     }
   }
   flushList();
