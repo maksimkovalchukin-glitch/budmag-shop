@@ -1575,6 +1575,7 @@ ul { list-style: none; }
   .hero__search { flex-direction: column; gap: 10px; }
   .hero__search input,
   .hero__search button { width: 100%; }
+  .hero__search button { padding: 16px; font-size: 1rem; min-height: 52px; }
 
   /* Hero stats 2x2 grid */
   .hero__stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; margin-top: 24px; }
