@@ -5,9 +5,9 @@ const CONFIG = {
     chat:  'https://n8n.automaticly.org/webhook/shop-chat',
   },
   shop: {
-    name: 'БудМаг',
+    name: 'Будівля.ua',
     phone: '+380 50 000 00 00',
-    email: 'info@budmag.ua',
+    email: 'info@budivlya.ua',
     workHours: 'Пн-Пт 9:00–18:00',
   },
   dataPath: './data',

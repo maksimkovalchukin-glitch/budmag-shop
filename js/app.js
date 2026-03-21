@@ -48,7 +48,7 @@ const DataLoader = {
 
 // ---- CART ----
 const Cart = {
-  _key: 'budmag_cart',
+  _key: 'budivlya_cart',
   items: [],
 
   load() {

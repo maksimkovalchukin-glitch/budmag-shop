@@ -27,7 +27,7 @@ const DeliveryPage = {
     this._initIcons();
     this._checkApiKeys();
     // Try to detect city from localStorage
-    const saved = localStorage.getItem('budmag_city');
+    const saved = localStorage.getItem('budivlya_city');
     if (saved) {
       try {
         const { name, ref } = JSON.parse(saved);
@@ -180,7 +180,7 @@ const DeliveryPage = {
     this.cityName = name;
     this.cityRef  = ref;
     this.closeAC();
-    localStorage.setItem('budmag_city', JSON.stringify({ name, ref, region }));
+    localStorage.setItem('budivlya_city', JSON.stringify({ name, ref, region }));
     this.searchBranches();
   },
 

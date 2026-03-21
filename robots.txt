@@ -3,4 +3,4 @@ Allow: /
 Disallow: /checkout.html
 Disallow: /data/
 
-Sitemap: https://budmag.ua/sitemap.xml
+Sitemap: https://budivlya.ua/sitemap.xml
