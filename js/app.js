@@ -14,7 +14,7 @@ const DataLoader = {
     return data;
   },
   async catalog() {
-    return this.get(`${CONFIG.dataPath}/catalog.json`);
+    return this.get(`${CONFIG.dataPath}/catalog.json?v=2`);
   },
   async category(id) {
     return this.get(`${CONFIG.dataPath}/cat_${id}.json`);
