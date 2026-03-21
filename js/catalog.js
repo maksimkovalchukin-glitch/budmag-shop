@@ -181,6 +181,23 @@ const CatalogPage = {
       return;
     }
     grid.innerHTML = page.map(renderProductCard).join('');
+    this._translateCards();
+  },
+
+  async _translateCards() {
+    const cards = [...document.querySelectorAll('.product-card__name')];
+    if (cards.length === 0) return;
+    try {
+      const texts = cards.map(el => el.getAttribute('title') || el.textContent.trim());
+      const { results, detectedLang } = await gtranslate(texts);
+      if (detectedLang === 'uk') return;
+      cards.forEach((el, i) => {
+        if (results[i]) {
+          el.textContent = results[i].slice(0, 80) + (results[i].length > 80 ? '...' : '');
+          el.title = results[i];
+        }
+      });
+    } catch {}
   },
 
   _renderPagination() {

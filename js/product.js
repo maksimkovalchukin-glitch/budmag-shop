@@ -15,10 +15,10 @@ function formatPlainDesc(text) {
   // Split by sentence endings
   const sentences = text.split(/(?<=[.!?])\s+/).filter(s => s.trim());
   const paras = [];
-  for (let i = 0; i < sentences.length; i += 3) {
-    paras.push(sentences.slice(i, i + 3).join(' '));
+  for (let i = 0; i < sentences.length; i += 2) {
+    paras.push(sentences.slice(i, i + 2).join(' '));
   }
-  return paras.map(p => `<p style="margin:0 0 10px">${escHtml(p)}</p>`).join('');
+  return paras.map(p => `<p style="margin:0 0 14px;line-height:1.65">${escHtml(p)}</p>`).join('');
 }
 
 const ProductPage = {
@@ -152,7 +152,7 @@ const ProductPage = {
         <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
           <div style="display:flex;gap:16px;flex-wrap:wrap">
             <div style="display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--text-muted)">
-              🚚 <span>Доставка Нова пошта / Укрпошта</span>
+              🚚 <span>Доставка Нова пошта</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--text-muted)">
               🔄 <span>Повернення 14 днів</span>
@@ -232,19 +232,6 @@ const ProductPage = {
 document.addEventListener('DOMContentLoaded', () => ProductPage.init());
 
 // ---- AUTO TRANSLATE (ru → uk) ----
-async function gtranslate(texts, toLang = 'uk') {
-  // Batch: join with unique delimiter, translate once, split back
-  const SEP = ' ||| ';
-  const joined = texts.join(SEP);
-  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${toLang}&dt=t&dt=ld&q=${encodeURIComponent(joined)}`;
-  const res = await fetch(url);
-  const data = await res.json();
-  const detectedLang = data[2];
-  const translatedJoined = (data[0] || []).map(c => c[0]).join('');
-  const results = translatedJoined.split(SEP).map(s => s.trim());
-  return { results, detectedLang };
-}
-
 async function autoTranslateProduct(product) {
   try {
     // Collect texts to translate
@@ -266,9 +253,6 @@ async function autoTranslateProduct(product) {
     if (h1 && results[i]) {
       h1.textContent = results[i];
       document.title = `${results[i]} — Будівля.ua`;
-      // Update breadcrumb last item
-      const bc = document.querySelector('.breadcrumb span[style]');
-      if (bc) bc.textContent = results[i].slice(0, 50) + (results[i].length > 50 ? '...' : '');
     }
     i++;
 

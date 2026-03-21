@@ -298,6 +298,19 @@ function renderSkeletons(n = 8) {
     </div>`).join('');
 }
 
+// ---- AUTO TRANSLATE ----
+async function gtranslate(texts, toLang = 'uk') {
+  const SEP = ' ||| ';
+  const joined = texts.join(SEP);
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${toLang}&dt=t&dt=ld&q=${encodeURIComponent(joined)}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const detectedLang = data[2];
+  const translatedJoined = (data[0] || []).map(c => c[0]).join('');
+  const results = translatedJoined.split(SEP).map(s => s.trim());
+  return { results, detectedLang };
+}
+
 // ---- UTILITIES ----
 function fmtPrice(n) {
   return Number(n).toLocaleString('uk-UA', { maximumFractionDigits: 0 });
