@@ -67,7 +67,7 @@ const ProductPage = {
     const thumbsHtml = imgs.length > 1
       ? imgs.map((src, i) => `
           <div class="gallery__thumb${i === 0 ? ' active' : ''}" onclick="ProductPage.setImg(${i})">
-            <img src="${src}" alt="" loading="lazy">
+            <img src="${src}" alt="" loading="lazy" onerror="this.closest('.gallery__thumb').remove()">
           </div>`).join('')
       : '';
 
@@ -83,6 +83,17 @@ const ProductPage = {
 
     const catLink = `catalog.html?cat=${catId}`;
 
+    // Description: plain text preview 300 chars, full HTML on expand
+    let descHtml = '';
+    if (p.description) {
+      const plain = descText(p.description);
+      if (plain.length > 300) {
+        descHtml = `<div class="product-info__desc" id="descBlock"><div id="descText">${escHtml(plain.slice(0, 300))}... <a href="#" style="color:var(--accent)" onclick="ProductPage.showFullDesc(event)">Читати більше</a></div></div>`;
+      } else {
+        descHtml = `<div class="product-info__desc" id="descBlock"><div id="descText">${sanitizeDesc(p.description)}</div></div>`;
+      }
+    }
+
     document.getElementById('productLayout').innerHTML = `
       <!-- Gallery -->
       <div class="gallery">
@@ -95,7 +106,7 @@ const ProductPage = {
         </nav>
         <div class="gallery__main" onclick="ProductPage.openLightbox()" id="galleryMain">
           ${mainImg
-            ? `<img src="${mainImg}" alt="${escHtml(p.name)}" id="mainImg">`
+            ? `<img src="${mainImg}" alt="${escHtml(p.name)}" id="mainImg" onerror="this.outerHTML='<span style=\\'font-size:5rem;color:var(--border)\\'>📦</span>'">`
             : `<span style="font-size:5rem;color:var(--border)">📦</span>`}
         </div>
         ${thumbsHtml ? `<div class="gallery__thumbs">${thumbsHtml}</div>` : ''}
@@ -126,17 +137,7 @@ const ProductPage = {
           </button>
         </div>
 
-        ${p.description ? `
-          <div class="product-info__desc" id="descBlock">
-            <div id="descText">${(() => {
-              const full = sanitizeDesc(p.description);
-              const preview = descText(p.description, 400);
-              const needMore = descText(p.description).length > 400;
-              return needMore
-                ? escHtml(preview) + `... <a href="#" style="color:var(--accent)" onclick="ProductPage.showFullDesc(event)">Читати більше</a>`
-                : full;
-            })()}</div>
-          </div>` : ''}
+        ${descHtml}
 
         ${specsHtml ? `
           <div>
