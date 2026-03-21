@@ -81,6 +81,11 @@ const Cart = {
     this.save();
     this._renderSidebar();
   },
+  setQty(id, qty) {
+    if (qty <= 0) { this.remove(id); return; }
+    const item = this.items.find(i => i.id === id);
+    if (item) { item.qty = qty; this.save(); this._renderSidebar(); }
+  },
   total() {
     return this.items.reduce((s, i) => s + i.price * (i.qty || 1), 0);
   },
@@ -117,7 +122,12 @@ const Cart = {
         </div>
         <div class="cart-item__info">
           <div class="cart-item__name">${escHtml(item.name.slice(0, 60))}${item.name.length > 60 ? '...' : ''}</div>
-          <div class="cart-item__price">${fmtPrice(item.price)} грн × ${item.qty || 1}</div>
+          <div class="cart-item__price">${fmtPrice(item.price * (item.qty || 1))} грн</div>
+          <div class="cart-item__qty">
+            <button onclick="Cart.setQty('${item.id}', ${(item.qty||1) - 1})">−</button>
+            <span>${item.qty || 1}</span>
+            <button onclick="Cart.setQty('${item.id}', ${(item.qty||1) + 1})">+</button>
+          </div>
         </div>
         <button class="cart-item__remove" onclick="Cart.remove('${item.id}')" title="Видалити">✕</button>
       </div>`).join('');
